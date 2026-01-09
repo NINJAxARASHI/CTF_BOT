@@ -9,7 +9,7 @@ class Kick(commands.Cog):
     @commands.command(name= 'kick', aliases=['Kick'])
     @commands.has_permissions(kick_members = True)
     async def kick(self, ctx, member: discord.Member):
-        if 'Kuwu' in str(member):
+        if 'IDEH-WORKER' in str(member):
             await ctx.send('You can\'t outsmart me')
             return
         await member.kick(reason=None)

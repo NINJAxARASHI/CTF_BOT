@@ -13,16 +13,14 @@ load_dotenv()
 
 
 global challenges
-challenges = {'pwn-intended-0x1':30001, 'pwn-intended-0x2':30007, 'pwn-intended-0x3':30013, 'Global Warming':30023, 'Cascade':30203, 'find32':30630,
-              'CCC':30215, 'File Library':30222, 'Mr Rami':30231, 'Oreo':30243, 'The Confused Deputy':30256,'The Usual Suspects':30279, 'Warm Up':30272, 'Secure Portal':30281,
-              'Escape Plan':30419, 'Prison Break':30407, 'Blaise':30808, 'Vietnam':30814, 'AKA':30611, 'Where am I':30623, 'Login Error':30431, 'Body Count':30202,
-              'Friends':30425, 'RicknMorty':30827, 'Secret Society': 30041, 'Smash':30046}
+# Dictionnaire des challenges: {'nom_du_challenge': port}
+# Exemple: challenges = {'Challenge 1': 30001, 'Challenge 2': 30002}
+challenges = {}
 
 global ch
-# ch =  {13: {'name': 'Esrever', 'solved': False}, 14: {'name': 'Rivest_Shamir_Adleman', 'solved': False}, 15: {'name': 'Archenemy', 'solved': False}, 16: {'name': 'pwn_intended_0x2', 'solved': False}, 17: {'name': 'Blaise', 'solved': False}, 18: {'name': 'pwn_intended_0x1', 'solved': False}, 19: {'name': 'pwn_intended_0x3', 'solved': False}, 20: {'name': 'Prison_Break', 'solved': False}, 21: {'name': 'CCC', 'solved': False}, 22: {'name': 'File_Library', 'solved': False}, 24: {'name': 'The_Confused_Deputy', 'solved': False}, 25: {'name': 'Warm_Up', 'solved': False}, 26: {'name': 'Gradient_sky', 'solved': False}, 27: {'name': 'Mein_Kampf', 'solved': False}, 28: {'name': 'The_Climb', 'solved': False}, 29: {'name': 'Modern_Clueless_Child', 'solved': False}, 30: {'name': 'Machine_Fix', 'solved': False}, 31: {'name': 'Prime_Roll', 'solved': False}, 32: {'name': 'Cascade', 'solved': False}, 33: {'name': 'Oreo', 'solved': False}, 34: {'name': 'Escape_Plan', 'solved': False}, 35: {'name': 'Pirates_of_the_Memorial', 'solved': False}, 36: {'name': 'Panda', 'solved': False}, 37: {'name': 'pydis2ctf', 'solved': False}, 38: {'name': 'Mr_Rami', 'solved': False}, 
-#        39: {'name': 'Commitment', 'solved': False}, 40: {'name': 'AKA', 'solved': False}, 41: {'name': 'Stalin_for_time', 'solved': False}, 42: {'name': 'Where_am_I', 'solved': False}, 43: {'name': 'Vietnam', 'solved': False}, 45: {'name': 'BroBot', 'solved': False}, 46: {'name': 'Flying_Places', 'solved': False}, 47: {'name': 'In_Your_Eyes', 'solved': False}, 48: {'name': 'Secure_Portal', 'solved': False}, 49: {'name': 'Global_Warming', 'solved': False}, 50: {'name': 'Bat_Soup', 'solved': False}, 52: {'name': 'The_Usual_Suspects', 'solved': False}, 53: {'name': 'Body_Count', 'solved': False}, 54: {'name': 'No_DIStractions', 'solved': False}, 55: {'name': 'unseen', 'solved': False}, 56: {'name': 'Smash', 'solved': False}, 57: {'name': 'Friends', 'solved': False}, 58: {'name': 'Lo_Scampo', 'solved': False}, 59: {'name': 'Login_Error', 'solved': False}, 60: {'name': 'little_RSA', 'solved': False}, 61: {'name': 'find32', 'solved': False}, 62: {'name': 'Secret_Society', 'solved': False}, 63: {'name': 'RicknMorty', 'solved': False}, 64: {'name': 'HTB_0x1', 'solved': False}}
-
-ch =  {69: {'name': 'HTB_0x3', 'solved': False}, 70: {'name': 'HTB_0x6', 'solved': False}, 73: {'name': 'HTB_0x4', 'solved': False}}
+# Dictionnaire des challenges pour first blood: {id: {'name': 'nom', 'solved': False}}
+# Exemple: ch = {1: {'name': 'Challenge 1', 'solved': False}}
+ch = {}
 
 
 
@@ -53,6 +51,9 @@ for filename in os.listdir('./cogs'):
 
 @tasks.loop(seconds=180)
 async def firstBlood():
+    # Si aucun challenge n'est configuré, on ne fait rien
+    if not ch or len(ch) == 0:
+        return
 
     allSolved = True
     keys = dict.keys(ch)
@@ -63,7 +64,14 @@ async def firstBlood():
     if(allSolved):
         return
     
-    channel = client.get_channel(int(os.getenv('FIRST_BLOOD_CHANNEL')))
+    # Vérifier si le channel est configuré
+    first_blood_channel = os.getenv('FIRST_BLOOD_CHANNEL')
+    if not first_blood_channel:
+        return
+    
+    channel = client.get_channel(int(first_blood_channel))
+    if not channel:
+        return
 
     options = Options()
     options.add_argument('--headless')
@@ -120,11 +128,24 @@ async def firstBlood():
 
 @tasks.loop(seconds = 120)
 async def checkChallenges():
+    # Si aucun challenge n'est configuré, on ne fait rien
+    if not challenges or len(challenges) == 0:
+        return
+    
     print("send")
     global connectionData
     connectionData={}
+    
+    # Vérifier si le channel est configuré
+    challenge_status_channel = os.getenv('CHALLENGE_STATUS_CHANNEL')
+    if not challenge_status_channel:
+        return
+    
     server = socket.gethostbyname('chall.csivit.com')
-    channel = client.get_channel(int(os.getenv('CHALLENGE_STATUS_CHANNEL')))
+    channel = client.get_channel(int(challenge_status_channel))
+    if not channel:
+        return
+    
     embed = discord.Embed(title="Challenge Status")
     for i in challenges:
         ADDR = (server, int(challenges[i]))
@@ -149,6 +170,10 @@ async def checkChallenges():
 @client.command(aliases=['Challenges', 'challenges', 'challenge'])
 @commands.has_permissions(kick_members=True)
 async def challengeStats(ctx):
+    if not challenges or len(challenges) == 0:
+        await ctx.send('Aucun challenge configuré pour le moment.')
+        return
+    
     if(not(len(connectionData) == len(challenges))):
         await ctx.send('Data is being collected, please wait for a few seconds!')
         return

@@ -23,7 +23,7 @@ class autoresponse(commands.Cog):
             return
             
         z = re.match('\w.*_', message.content)
-        if 'csictf{' in message.content or z:
+        if 'IDEH{' in message.content or z:
             await channel.purge(limit=1)
             await channel.send(f'<@!{message.author.id}> don\'t post flags here!')
 

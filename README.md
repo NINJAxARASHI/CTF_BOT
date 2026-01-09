@@ -49,7 +49,7 @@
   </a>
 </p>
 
-**Kuwu** is a discord utility bot implemented to be used specifically with CTF(s). It can help you organize and manage the CTF with it's varied features such as monitoring the challenges as well as first blood updates. The bot also filters out flags from the csictf discord server. It was also used in one of the challenges where teams had to DM the bot for the flag. 
+**IDEH-WORKER** is a discord utility bot implemented to be used specifically with CTF(s). It can help you organize and manage the CTF with it's varied features such as monitoring the challenges as well as first blood updates. The bot also filters out flags from the discord server. It was also used in one of the challenges where teams had to DM the bot for the flag. 
 
 
 ### Built With

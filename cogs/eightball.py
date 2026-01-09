@@ -21,7 +21,7 @@ class EightBall(commands.Cog):
             await ctx.channel.purge(limit=1)
             return
 
-        if 'csictf{' in question:
+        if 'IDEH{' in question:
             await ctx.channel.purge(limit=1)
             await ctx.send('Oh no no! Don\'t post flags here.')
         else:
